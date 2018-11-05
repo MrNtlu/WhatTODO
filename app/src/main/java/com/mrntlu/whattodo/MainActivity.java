@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter customAdapter;
     Menu menu;
     ActivityController activityCont;
+    private final String sortKey="SORT_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
         myRealm=Realm.getDefaultInstance();
 
-        if (Prefs.with(this).readInt("SORT_KEY")==-1) Prefs.with(this).writeInt("SORT_KEY",0);
+        ActivityController.initPref(MainActivity.this,sortKey);
 
-        if (Prefs.with(this).readInt("SORT_KEY")==1) realmResults=myRealm.where(Categories.class).sort("category",Sort.DESCENDING).findAll();
+        if (Prefs.with(this).readInt(sortKey)==1) realmResults=myRealm.where(Categories.class).sort("category",Sort.DESCENDING).findAll();
         else realmResults=myRealm.where(Categories.class).sort("category").findAll();
 
         customAdapter=new CustomAdapter(this,realmResults,this);
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                             public void execute(Realm realm) {
                                 try{
                                     addDialog(1,position);
-                                    Toasty.success(MainActivity.this,"Done.",Toast.LENGTH_SHORT).show();
                                 }catch (Exception e){
                                     Toasty.error(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         if (myRealm.where(Categories.class).equalTo("category", categoryString).findAll().size() < 1 ||
-                                categoryString == realmResults.get(position).getCategory()) {
+                                categoryString.equals(realmResults.get(position).getCategory())) {
 
                             myRealm.executeTransaction(new Realm.Transaction() {
                                 @Override
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                                     updateOrAdd(categories, categoryString, colorID);
                                 }
                             });
+
                             addDialog.dismiss();
                         } else {
                             Toasty.error(MainActivity.this, "Please don't use the same category name.", Toast.LENGTH_SHORT).show();
@@ -214,10 +215,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu,menu);
         this.menu=menu;
-        if (Prefs.with(this).readInt("SORT_KEY")==0){
+        if (Prefs.with(this).readInt(sortKey)==0){
             activityCont.setSortMenuItemIcon(R.drawable.reverse_alp,menu);
 
-        }else if (Prefs.with(this).readInt("SORT_KEY")==1){
+        }else if (Prefs.with(this).readInt(sortKey)==1){
             activityCont.setSortMenuItemIcon(R.drawable.sort_alp,menu);
         }
         return true;
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         realmResults=realmResults.sort("category",sortingType);
         customAdapter=new CustomAdapter(MainActivity.this,realmResults,MainActivity.this);
         categoriesRV.setAdapter(customAdapter);
-        Prefs.with(this).writeInt("SORT_KEY",option);
+        Prefs.with(this).writeInt(sortKey,option);
     }
 
     @Override
@@ -238,9 +239,9 @@ public class MainActivity extends AppCompatActivity {
                 addDialog(0,0);
                 break;
             case R.id.sort_alphabet:
-                if (Prefs.with(this).readInt("SORT_KEY")==0){
+                if (Prefs.with(this).readInt(sortKey)==0){
                     onOptionsController(1,R.drawable.sort_alp,Sort.DESCENDING);
-                }else if(Prefs.with(this).readInt("SORT_KEY") == 1){
+                }else if(Prefs.with(this).readInt(sortKey) == 1){
                     onOptionsController(0,R.drawable.reverse_alp,Sort.ASCENDING);
                 }
                 customAdapter.notifyDataSetChanged();

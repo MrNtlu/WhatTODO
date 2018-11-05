@@ -29,6 +29,11 @@ public class ActivityController {
         this.myRealm = myRealm;
     }
 
+    public static void initPref(Context context,String key){
+        if (Prefs.with(context).readInt(key)==-1) Prefs.with(context).writeInt(key,0);
+
+    }
+
     public void setMenu(){
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override

@@ -7,6 +7,8 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.prefs.Prefs;
@@ -36,6 +39,7 @@ public class TodoActivity extends AppCompatActivity {
 
     Realm myRealm;
     RealmList<TodoItems> todoItems;
+
     String titleName;
     int colorHex;
     CustomAdapter customAdapter;
@@ -51,6 +55,7 @@ public class TodoActivity extends AppCompatActivity {
         myRealm=Realm.getDefaultInstance();
         titleName=getIntent().getStringExtra("TITLE_NAME");
         colorHex=getIntent().getIntExtra("TOOLBAR_COLOR",R.color.colorPrimaryDark);
+
         todoItems=myRealm.where(Categories.class).equalTo("category",titleName).findFirst().getTodoItems();
 
         customAdapter=new CustomAdapter(this,todoItems,this,colorHex);
@@ -80,7 +85,6 @@ public class TodoActivity extends AppCompatActivity {
                             public void execute(Realm realm) {
                                 try{
                                     addDialog(1,position);
-                                    Toasty.success(TodoActivity.this,"Done.",Toast.LENGTH_SHORT).show();
                                 }catch (Exception e){
                                     Toasty.error(TodoActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
@@ -139,8 +143,9 @@ public class TodoActivity extends AppCompatActivity {
                                 public void execute(Realm realm) {
                                     try {
                                         TodoItems todoItem = realm.createObject(TodoItems.class);
-                                        updateOrAdd(todoItem, todoString);
+                                        todoItem.setTodo(todoString);
                                         todoItems.add(todoItem);
+                                        customAdapter.notifyDataSetChanged();
                                         Toasty.success(TodoActivity.this, "Succesfully Added.", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
                                         Toasty.error(TodoActivity.this, "Error!", Toast.LENGTH_SHORT).show();
@@ -159,7 +164,8 @@ public class TodoActivity extends AppCompatActivity {
                             @Override
                             public void execute(Realm realm) {
                                 TodoItems todoItem = todoItems.get(position);
-                                updateOrAdd(todoItem, todoString);
+                                todoItem.setTodo(todoString);
+                                customAdapter.notifyDataSetChanged();
                             }
                         });
                         addDialog.dismiss();
@@ -173,26 +179,12 @@ public class TodoActivity extends AppCompatActivity {
         addDialog.show();
     }
 
-    void updateOrAdd(TodoItems todoItem, String todo){
-        todoItem.setTodo(todo);
-        customAdapter.notifyDataSetChanged();
-    }
-
-    void onOptionsController(int option,int drawableID,Sort sortingType){
-        activityCont.setSortMenuItemIcon(drawableID,menu);
-        todoItems=new RealmList<TodoItems>();
-        RealmResults<TodoItems> realmResults=todoItems.sort("todo",sortingType);
-        todoItems.addAll(realmResults.subList(0,realmResults.size()));
-        customAdapter=new CustomAdapter(this,todoItems,this,colorHex);
-        todoRV.setAdapter(customAdapter);
-        Prefs.with(this).writeInt("SORT_VALUE",option);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu,menu);
         this.menu=menu;
-
+        menu.getItem(0).setEnabled(false);
+        menu.getItem(0).setVisible(false);
         return true;
     }
 
@@ -201,14 +193,6 @@ public class TodoActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.addButton:
                 addDialog(0,0);
-                break;
-            case R.id.sort_alphabet:
-                if (Prefs.with(this).readInt("TODO_SORT")==0){
-                    onOptionsController(1,R.drawable.sort_alp,Sort.DESCENDING);
-                }else if(Prefs.with(this).readInt("TODO_SORT")==1){
-                    onOptionsController(0,R.drawable.reverse_alp,Sort.ASCENDING);
-                }
-                customAdapter.notifyDataSetChanged();
                 break;
             case android.R.id.home:
                 startActivity(new Intent(this,MainActivity.class));
