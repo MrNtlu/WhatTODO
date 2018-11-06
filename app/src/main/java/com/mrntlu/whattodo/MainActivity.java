@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         if (Prefs.with(this).readInt(sortKey)==1) realmResults=myRealm.where(Categories.class).sort("category",Sort.DESCENDING).findAll();
         else realmResults=myRealm.where(Categories.class).sort("category").findAll();
 
-        customAdapter=new CustomAdapter(this,realmResults,this);
+        customAdapter=new CustomAdapter(this,realmResults,this,R.layout.categories_layout);
         activityCont=new ActivityController(MainActivity.this,categoriesRV,customAdapter,myRealm);
 
         setSupportActionBar(toolbar);
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     void onOptionsController(int option,int drawableID,Sort sortingType){
         activityCont.setSortMenuItemIcon(drawableID,menu);
         realmResults=realmResults.sort("category",sortingType);
-        customAdapter=new CustomAdapter(MainActivity.this,realmResults,MainActivity.this);
+        customAdapter=new CustomAdapter(MainActivity.this,realmResults,MainActivity.this,R.layout.categories_layout);
         categoriesRV.setAdapter(customAdapter);
         Prefs.with(this).writeInt(sortKey,option);
     }

@@ -2,9 +2,12 @@ package com.mrntlu.whattodo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.mrntlu.whattodo.Models.Categories;
@@ -20,18 +23,21 @@ public class CustomAdapter extends BaseAdapter {
     OrderedRealmCollection<TodoItems> todoItems;
     Activity activity;
     int colorHex;
+    int resource;
 
-    public CustomAdapter(Context context, OrderedRealmCollection<Categories> categoriesRealm, Activity activity) {
+    public CustomAdapter(Context context, OrderedRealmCollection<Categories> categoriesRealm, Activity activity,int resource) {
         this.context = context;
         this.categoriesRealm = categoriesRealm;
         this.activity = activity;
+        this.resource=resource;
     }
 
-    public CustomAdapter(Context context, OrderedRealmCollection<TodoItems> todoItems, Activity activity, int colorHex) {
+    public CustomAdapter(Context context, OrderedRealmCollection<TodoItems> todoItems, Activity activity, int colorHex,int resource) {
         this.context = context;
         this.todoItems = todoItems;
         this.activity = activity;
         this.colorHex = colorHex;
+        this.resource=resource;
     }
 
     @Override
@@ -47,7 +53,7 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view==null) {
-            View myView = activity.getLayoutInflater().inflate(R.layout.categories_layout, null);
+            View myView = activity.getLayoutInflater().inflate(resource, null);
             setViewLayouts(myView,i);
 
             return myView;
@@ -66,9 +72,18 @@ public class CustomAdapter extends BaseAdapter {
             textView.setText(categoriesRealm.get(position).getCategory());
         }else if (categoriesRealm==null){
             constraintLayout.setBackgroundColor(ContextCompat.getColor(context, colorHex));
+            CheckBox checkBox=view.findViewById(R.id.checkBox);
 
             TextView textView = (TextView) view.findViewById(R.id.myText);
             textView.setText(todoItems.get(position).getTodo());
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b){
+                        //TODO set overline
+                    }
+                }
+            });
         }
     }
 

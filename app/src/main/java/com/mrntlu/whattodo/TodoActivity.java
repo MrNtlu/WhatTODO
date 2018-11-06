@@ -58,7 +58,7 @@ public class TodoActivity extends AppCompatActivity {
 
         todoItems=myRealm.where(Categories.class).equalTo("category",titleName).findFirst().getTodoItems();
 
-        customAdapter=new CustomAdapter(this,todoItems,this,colorHex);
+        customAdapter=new CustomAdapter(this,todoItems,this,colorHex,R.layout.todo_layout);
         activityCont=new ActivityController(TodoActivity.this,todoRV,customAdapter,myRealm);
         setSupportActionBar(toolbar);
 
