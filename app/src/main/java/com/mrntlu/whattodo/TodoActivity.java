@@ -2,7 +2,10 @@ package com.mrntlu.whattodo;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,14 +18,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
 
+import androidx.core.graphics.drawable.DrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.prefs.Prefs;
@@ -34,8 +40,13 @@ import io.realm.Sort;
 
 public class TodoActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)Toolbar toolbar;
-    @BindView(R.id.todo_recycler)SwipeMenuListView todoRV;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
+    @BindView(R.id.categories_recycler) SwipeMenuListView todoRV;
+
+    @BindView(R.id.searchView)SearchView searchView;
+
+    @BindView(R.id.searchButton)FloatingActionButton floatingActionButton;
 
     Realm myRealm;
     RealmList<TodoItems> todoItems;
@@ -49,7 +60,7 @@ public class TodoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_todo);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Realm.init(this);
         myRealm=Realm.getDefaultInstance();
@@ -65,7 +76,7 @@ public class TodoActivity extends AppCompatActivity {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
+        floatingActionButton.setSupportBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this,colorHex)));
         activityCont.setMenu();
 
         todoRV.setAdapter(customAdapter);
@@ -126,6 +137,8 @@ public class TodoActivity extends AppCompatActivity {
         addDialog.setContentView(R.layout.custom_todo);
         Button addButton = addDialog.findViewById(R.id.addButton);
         final TextView whatTodoText = addDialog.findViewById(R.id.whatToDo);
+        ConstraintLayout constraintLayout=addDialog.findViewById(R.id.constraintLayout);
+        constraintLayout.setBackground(ContextCompat.getDrawable(this,colorHex));
 
         if (addOrUpdate == 1) {
             whatTodoText.setText(todoItems.get(position).getTodo());

@@ -6,23 +6,27 @@ import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.prefs.Prefs;
 import es.dmoral.toasty.Toasty;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -34,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.categories_recycler) SwipeMenuListView categoriesRV;
 
+    @BindView(R.id.constraintLayout)ConstraintLayout layout;
+
+    @BindView(R.id.searchView)SearchView searchView;
+
+    @BindView(R.id.searchButton)FloatingActionButton floatingActionButton;
+
     RealmResults<Categories> realmResults;
 
     Realm myRealm;
@@ -41,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
     Menu menu;
     ActivityController activityCont;
     private final String sortKey="SORT_KEY";
+
+    @Override
+    public void onBackPressed() {
+        if (searchView.getVisibility()==View.VISIBLE){
+            searchView.setVisibility(View.GONE);
+            floatingActionButton.show();
+            if (realmResults!=null && categoriesRV!=null){
+                setListviewAdapter(realmResults);
+            }
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +140,44 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchView.setVisibility(View.VISIBLE);
+                searchView.setIconified(false);
+                floatingActionButton.hide();
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchView.setVisibility(View.GONE);
+                floatingActionButton.show();
+                setListviewAdapter(realmResults);
+                return true;
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                RealmResults<Categories> tempResults=myRealm.where(Categories.class).contains("category",s, Case.INSENSITIVE).findAll();
+                setListviewAdapter(tempResults);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+    }
+
+    void setListviewAdapter(RealmResults<Categories> results){
+        customAdapter=new CustomAdapter(MainActivity.this,results,MainActivity.this,R.layout.categories_layout);
+        categoriesRV.setAdapter(customAdapter);
     }
 
     void addDialog(final int addOrUpdate, final int position) {

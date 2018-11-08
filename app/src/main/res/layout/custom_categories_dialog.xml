@@ -74,12 +74,6 @@
                 android:buttonTint="@color/blue900" />
 
             <RadioButton
-                android:id="@+id/greenColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/green900" />
-
-            <RadioButton
                 android:id="@+id/redColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,6 +84,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/orange900" />
+
+            <RadioButton
+                android:id="@+id/greenColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/green900" />
         </RadioGroup>
 
         <Button
@@ -101,7 +101,7 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/rounded_button"
             android:text="Add"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />

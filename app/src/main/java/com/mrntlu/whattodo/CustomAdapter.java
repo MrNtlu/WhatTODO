@@ -2,6 +2,7 @@ package com.mrntlu.whattodo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,13 +75,17 @@ public class CustomAdapter extends BaseAdapter {
             constraintLayout.setBackgroundColor(ContextCompat.getColor(context, colorHex));
             CheckBox checkBox=view.findViewById(R.id.checkBox);
 
-            TextView textView = (TextView) view.findViewById(R.id.myText);
+            final TextView textView = (TextView) view.findViewById(R.id.myText);
             textView.setText(todoItems.get(position).getTodo());
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (b){
-                        //TODO set overline
+                        textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        textView.setTextColor(ContextCompat.getColor(context,R.color.darkwhite));
+                    }else{
+                        textView.setPaintFlags(textView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                        textView.setTextColor(ContextCompat.getColor(context,R.color.white));
                     }
                 }
             });

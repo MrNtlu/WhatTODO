@@ -20,9 +20,9 @@
             android:layout_marginEnd="8dp"
             android:ems="10"
             android:hint="What To-Do?"
-            android:textColorHint="@color/darkwhite"
-            android:inputType="textPersonName"
+            android:inputType="textShortMessage|textLongMessage"
             android:textColor="@color/white"
+            android:textColorHint="@color/colorAccent"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="parent" />
@@ -36,7 +36,7 @@
             android:layout_marginEnd="4dp"
             android:background="@drawable/rounded_button"
             android:text="Add"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toEndOf="@+id/guideline3"
             app:layout_constraintTop_toBottomOf="@+id/whatToDo" />
