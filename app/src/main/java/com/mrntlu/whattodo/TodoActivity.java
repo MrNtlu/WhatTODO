@@ -9,8 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
-
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,11 +18,14 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
@@ -35,7 +36,7 @@ public class TodoActivity extends AppCompatActivity{
 
     @BindView(R.id.toolbar) Toolbar toolbar;
 
-    @BindView(R.id.categories_recycler) SwipeMenuListView todoRV;
+    @BindView(R.id.categories_recycler)RecyclerView todoRV;
 
     @BindView(R.id.searchView)SearchView searchView;
 
@@ -49,11 +50,12 @@ public class TodoActivity extends AppCompatActivity{
     CustomAdapter customAdapter;
     Menu menu;
     ActivityController activityCont;
+    RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_todo);
         ButterKnife.bind(this);
         Realm.init(this);
         myRealm=Realm.getDefaultInstance();
@@ -62,6 +64,7 @@ public class TodoActivity extends AppCompatActivity{
 
         todoItems=myRealm.where(Categories.class).equalTo("category",titleName).findFirst().getTodoItems();
 
+        recyclerViewAdapter=new RecyclerViewAdapter(this,todoItems,this,colorHex,R.layout.todo_layout,myRealm);
         customAdapter=new CustomAdapter(this,todoItems,this,colorHex,R.layout.todo_layout,myRealm);
         activityCont=new ActivityController(TodoActivity.this,todoRV,customAdapter,myRealm);
         setSupportActionBar(toolbar);
@@ -70,51 +73,61 @@ public class TodoActivity extends AppCompatActivity{
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         floatingActionButton.setSupportBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this,colorHex)));
-        activityCont.setMenu();
 
-        todoRV.setAdapter(customAdapter);
+        //activityCont.setMenu();
+
+        //
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        todoRV.setLayoutManager(linearLayoutManager);
+//        DividerItemDecoration itemDecor = new DividerItemDecoration(this,linearLayoutManager.getOrientation());
+//        todoRV.addItemDecoration(itemDecor);
+
+        todoRV.setAdapter(recyclerViewAdapter);
+        //
 
         window.setStatusBarColor(ContextCompat.getColor(this,colorHex));
 
         setActionBar();
 
-        todoRV.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
-                final TodoItems todoItem = todoItems.get(position);
-                switch (index){
-                    case 0:
-                        myRealm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                try{
-                                    addDialog(1,position);
-                                }catch (Exception e){
-                                    Toasty.error(TodoActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        break;
-                    case 1:
-                        myRealm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                try {
-                                    todoItem.deleteFromRealm();
-                                    customAdapter.notifyDataSetChanged();
-                                    Toasty.success(TodoActivity.this,"Succesfully Deleted.",Toast.LENGTH_SHORT).show();
-                                }catch (Exception e){
-                                    Toasty.error(TodoActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        break;
-                }
-                return false;
-            }
-        });
+
+
+//        todoRV.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
+//                final TodoItems todoItem = todoItems.get(position);
+//                switch (index){
+//                    case 0:
+//                        myRealm.executeTransaction(new Realm.Transaction() {
+//                            @Override
+//                            public void execute(Realm realm) {
+//                                try{
+//                                    addDialog(1,position);
+//                                }catch (Exception e){
+//                                    Toasty.error(TodoActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                        break;
+//                    case 1:
+//                        myRealm.executeTransaction(new Realm.Transaction() {
+//                            @Override
+//                            public void execute(Realm realm) {
+//                                try {
+//                                    todoItem.deleteFromRealm();
+//                                    customAdapter.notifyDataSetChanged();
+//                                    Toasty.success(TodoActivity.this,"Succesfully Deleted.",Toast.LENGTH_SHORT).show();
+//                                }catch (Exception e){
+//                                    Toasty.error(TodoActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     private void setActionBar(){
@@ -152,7 +165,7 @@ public class TodoActivity extends AppCompatActivity{
                                         todoItem.setTodo(todoString);
                                         todoItem.setChecked(false);
                                         todoItems.add(todoItem);
-                                        customAdapter.notifyDataSetChanged();
+                                        recyclerViewAdapter.notifyDataSetChanged();
                                         Toasty.success(TodoActivity.this, "Succesfully Added.", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
                                         Toasty.error(TodoActivity.this, "Error!", Toast.LENGTH_SHORT).show();
@@ -172,7 +185,7 @@ public class TodoActivity extends AppCompatActivity{
                             public void execute(Realm realm) {
                                 TodoItems todoItem = todoItems.get(position);
                                 todoItem.setTodo(todoString);
-                                customAdapter.notifyDataSetChanged();
+                                recyclerViewAdapter.notifyDataSetChanged();
                             }
                         });
                         addDialog.dismiss();

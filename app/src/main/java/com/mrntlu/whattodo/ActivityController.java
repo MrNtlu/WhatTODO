@@ -1,39 +1,37 @@
 package com.mrntlu.whattodo;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.mrntlu.whattodo.Models.Categories;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import es.dmoral.prefs.Prefs;
-import es.dmoral.toasty.Toasty;
 import io.realm.Realm;
 
 public class ActivityController{
 
     Context context;
     SwipeMenuListView listView;
+    RecyclerView listView2;
     CustomAdapter customAdapter;
     Realm myRealm;
 
     public ActivityController(Context context, SwipeMenuListView listView, CustomAdapter customAdapter, Realm myRealm) {
         this.context = context;
         this.listView = listView;
+        this.customAdapter = customAdapter;
+        this.myRealm = myRealm;
+    }
+
+    public ActivityController(Context context, RecyclerView listView, CustomAdapter customAdapter, Realm myRealm) {
+        this.context = context;
+        this.listView2 = listView;
         this.customAdapter = customAdapter;
         this.myRealm = myRealm;
     }
@@ -62,9 +60,10 @@ public class ActivityController{
                 menu.addMenuItem(deleteItem);
             }
         };
-
-        listView.setMenuCreator(creator);
-        listView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
+        if (listView!=null) {
+            listView.setMenuCreator(creator);
+            listView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
+        }
     }
 
     void setSortMenuItemIcon(int drawableID,Menu menu){
