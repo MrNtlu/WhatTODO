@@ -3,6 +3,7 @@ package com.mrntlu.whattodo;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
+import io.realm.RealmList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
@@ -27,6 +29,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     int colorHex;
     int resource;
     Realm myRealm;
+    TodoActivity todoActivity;
 
     public RecyclerViewAdapter(Context context, OrderedRealmCollection<TodoItems> todoItems, Activity activity, int colorHex, int resource, Realm myRealm) {
         this.context = context;
@@ -35,6 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.colorHex = colorHex;
         this.resource = resource;
         this.myRealm = myRealm;
+        todoActivity=new TodoActivity();
     }
 
     @NonNull
@@ -58,6 +62,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 overlineController(b,holder.textView);
                 setTodoChecked(b,position);
+            }
+        });
+
+        holder.constraintLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                todoActivity.openAddDialog(1,position,context,todoItems,colorHex,myRealm,RecyclerViewAdapter.this);
+                return true;
             }
         });
     }

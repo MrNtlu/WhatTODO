@@ -5,6 +5,8 @@ import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (searchView.getVisibility()==View.VISIBLE){
-            searchView.setVisibility(View.GONE);
-            floatingActionButton.show();
+            activityCont.searchViewClosed(searchView,floatingActionButton);
             if (realmResults!=null && categoriesRV!=null){
                 setListviewAdapter(realmResults);
             }
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void execute(Realm realm) {
                                 try{
-                                    addDialog(1,position);
+                                    openAddDialog(1,position);
                                 }catch (Exception e){
                                     Toasty.error(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
@@ -133,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent=new Intent(MainActivity.this,TodoActivity.class);
-                intent.putExtra("TITLE_NAME",realmResults.get(i).getCategory());
-                intent.putExtra("TOOLBAR_COLOR",realmResults.get(i).getColorID());
+                intent.putExtra("TITLE_NAME", customAdapter.categoriesRealm.get(i).getCategory());
+                intent.putExtra("TOOLBAR_COLOR", customAdapter.categoriesRealm.get(i).getColorID());
                 startActivity(intent);
             }
         });
@@ -142,17 +143,14 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchView.setVisibility(View.VISIBLE);
-                searchView.setIconified(false);
-                floatingActionButton.hide();
+                activityCont.floatButtonClick(searchView,floatingActionButton);
             }
         });
 
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                searchView.setVisibility(View.GONE);
-                floatingActionButton.show();
+                activityCont.searchViewClosed(searchView,floatingActionButton);
                 setListviewAdapter(realmResults);
                 return true;
             }
@@ -190,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addButton:
-                addDialog(0,0);
+                openAddDialog(0,0);
                 break;
             case R.id.sort_alphabet:
                 if (Prefs.with(this).readInt(sortKey)==0){
@@ -231,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         categoriesRV.setAdapter(customAdapter);
     }
 
-    void addDialog(final int addOrUpdate, final int position) {
+    void openAddDialog(final int addOrUpdate, final int position) {
         final Dialog addDialog = new Dialog(this);
         addDialog.setContentView(R.layout.custom_categories_dialog);
         Button addButton = addDialog.findViewById(R.id.addButton);
@@ -262,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                             colorID = R.color.yellow700;
                             break;
                         case R.id.greenColor:
-                            colorID = R.color.green900;
+                            colorID = R.color.colorPrimaryDark;
                             break;
                         case R.id.blueColor:
                             colorID = R.color.blue900;
@@ -282,9 +280,8 @@ public class MainActivity extends AppCompatActivity {
                                     try {
                                         Categories categories = realm.createObject(Categories.class);
                                         updateAndAdd(categories, categoryString, colorID);
-                                        Toasty.success(MainActivity.this, "Succesfully Added.", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
-                                        Toasty.error(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                                        Toasty.error(MainActivity.this, "Error!"+e.getMessage(), Toast.LENGTH_SHORT).show();
                                         e.printStackTrace();
                                     }
                                 }

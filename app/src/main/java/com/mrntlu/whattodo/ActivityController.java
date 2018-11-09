@@ -4,10 +4,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
+import android.view.View;
+import android.widget.SearchView;
+
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +33,7 @@ public class ActivityController{
         this.myRealm = myRealm;
     }
 
-    public ActivityController(Context context, RecyclerView listView, CustomAdapter customAdapter, Realm myRealm) {
+    public ActivityController(Context context, RecyclerView listView, Realm myRealm) {
         this.context = context;
         this.listView2 = listView;
         this.customAdapter = customAdapter;
@@ -75,5 +79,16 @@ public class ActivityController{
             return false;
         }
         return true;
+    }
+
+    void floatButtonClick(SearchView searchView, FloatingActionButton fab){
+        searchView.setVisibility(View.VISIBLE);
+        searchView.setIconified(false);
+        fab.hide();
+    }
+
+    void searchViewClosed(SearchView searchView,FloatingActionButton fab){
+        searchView.setVisibility(View.GONE);
+        fab.show();
     }
 }
