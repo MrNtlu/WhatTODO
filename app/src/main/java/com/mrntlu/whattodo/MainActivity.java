@@ -2,7 +2,6 @@ package com.mrntlu.whattodo;
 
 import android.app.Dialog;
 import android.content.Intent;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -20,7 +19,6 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
-
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -175,6 +173,59 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+        this.menu=menu;
+        if (Prefs.with(this).readInt(sortKey)==0){
+            activityCont.setSortMenuItemIcon(R.drawable.reverse_alp,menu);
+
+        }else if (Prefs.with(this).readInt(sortKey)==1){
+            activityCont.setSortMenuItemIcon(R.drawable.sort_alp,menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.addButton:
+                addDialog(0,0);
+                break;
+            case R.id.sort_alphabet:
+                if (Prefs.with(this).readInt(sortKey)==0){
+                    onOptionsController(1,R.drawable.sort_alp,Sort.DESCENDING);
+                }else if(Prefs.with(this).readInt(sortKey) == 1){
+                    onOptionsController(0,R.drawable.reverse_alp,Sort.ASCENDING);
+                }
+                customAdapter.notifyDataSetChanged();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(myRealm != null) {
+            myRealm.close();
+        }
+        super.onDestroy();
+    }
+
+    void onOptionsController(int option,int drawableID,Sort sortingType){
+        activityCont.setSortMenuItemIcon(drawableID,menu);
+        realmResults=realmResults.sort("category",sortingType);
+        customAdapter=new CustomAdapter(MainActivity.this,realmResults,MainActivity.this,R.layout.categories_layout);
+        categoriesRV.setAdapter(customAdapter);
+        Prefs.with(this).writeInt(sortKey,option);
+    }
+
+    void updateAndAdd(Categories categories, String category, int colorID){
+        categories.setCategory(category);
+        categories.setColorID(colorID);
+        customAdapter.notifyDataSetChanged();
+    }
+
     void setListviewAdapter(RealmResults<Categories> results){
         customAdapter=new CustomAdapter(MainActivity.this,results,MainActivity.this,R.layout.categories_layout);
         categoriesRV.setAdapter(customAdapter);
@@ -184,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         final Dialog addDialog = new Dialog(this);
         addDialog.setContentView(R.layout.custom_categories_dialog);
         Button addButton = addDialog.findViewById(R.id.addButton);
-        final TextView categoriesText = addDialog.findViewById(R.id.categoryName);
+        final TextView categoriesText = addDialog.findViewById(R.id.editText);
         final RadioGroup colorGroup = addDialog.findViewById(R.id.radioGroup);
 
         if (addOrUpdate == 1) {
@@ -230,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void execute(Realm realm) {
                                     try {
                                         Categories categories = realm.createObject(Categories.class);
-                                        updateOrAdd(categories, categoryString, colorID);
+                                        updateAndAdd(categories, categoryString, colorID);
                                         Toasty.success(MainActivity.this, "Succesfully Added.", Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
                                         Toasty.error(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
@@ -250,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void execute(Realm realm) {
                                     Categories categories = realmResults.get(position);
-                                    updateOrAdd(categories, categoryString, colorID);
+                                    updateAndAdd(categories, categoryString, colorID);
                                 }
                             });
 
@@ -265,58 +316,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addDialog.show();
-    }
-
-    void updateOrAdd(Categories categories, String category, int colorID){
-        categories.setCategory(category);
-        categories.setColorID(colorID);
-        customAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
-        this.menu=menu;
-        if (Prefs.with(this).readInt(sortKey)==0){
-            activityCont.setSortMenuItemIcon(R.drawable.reverse_alp,menu);
-
-        }else if (Prefs.with(this).readInt(sortKey)==1){
-            activityCont.setSortMenuItemIcon(R.drawable.sort_alp,menu);
-        }
-        return true;
-    }
-
-    void onOptionsController(int option,int drawableID,Sort sortingType){
-        activityCont.setSortMenuItemIcon(drawableID,menu);
-        realmResults=realmResults.sort("category",sortingType);
-        customAdapter=new CustomAdapter(MainActivity.this,realmResults,MainActivity.this,R.layout.categories_layout);
-        categoriesRV.setAdapter(customAdapter);
-        Prefs.with(this).writeInt(sortKey,option);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.addButton:
-                addDialog(0,0);
-                break;
-            case R.id.sort_alphabet:
-                if (Prefs.with(this).readInt(sortKey)==0){
-                    onOptionsController(1,R.drawable.sort_alp,Sort.DESCENDING);
-                }else if(Prefs.with(this).readInt(sortKey) == 1){
-                    onOptionsController(0,R.drawable.reverse_alp,Sort.ASCENDING);
-                }
-                customAdapter.notifyDataSetChanged();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(myRealm != null) {
-            myRealm.close();
-        }
-        super.onDestroy();
     }
 }

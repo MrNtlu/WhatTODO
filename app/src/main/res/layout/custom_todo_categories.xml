@@ -12,7 +12,7 @@
         android:background="@color/colorPrimaryDark">
 
         <EditText
-            android:id="@+id/whatToDo"
+            android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -39,7 +39,7 @@
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toEndOf="@+id/guideline3"
-            app:layout_constraintTop_toBottomOf="@+id/whatToDo" />
+            app:layout_constraintTop_toBottomOf="@+id/editText" />
 
         <Space
             android:layout_width="0dp"

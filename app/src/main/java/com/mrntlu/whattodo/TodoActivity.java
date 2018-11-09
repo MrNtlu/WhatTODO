@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
-
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,24 +20,18 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
-
-import androidx.core.graphics.drawable.DrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import es.dmoral.prefs.Prefs;
 import es.dmoral.toasty.Toasty;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
-public class TodoActivity extends AppCompatActivity {
+public class TodoActivity extends AppCompatActivity{
 
     @BindView(R.id.toolbar) Toolbar toolbar;
 
@@ -69,7 +62,7 @@ public class TodoActivity extends AppCompatActivity {
 
         todoItems=myRealm.where(Categories.class).equalTo("category",titleName).findFirst().getTodoItems();
 
-        customAdapter=new CustomAdapter(this,todoItems,this,colorHex,R.layout.todo_layout);
+        customAdapter=new CustomAdapter(this,todoItems,this,colorHex,R.layout.todo_layout,myRealm);
         activityCont=new ActivityController(TodoActivity.this,todoRV,customAdapter,myRealm);
         setSupportActionBar(toolbar);
 
@@ -134,9 +127,9 @@ public class TodoActivity extends AppCompatActivity {
 
     void addDialog(final int addOrUpdate, final int position){
         final Dialog addDialog = new Dialog(this);
-        addDialog.setContentView(R.layout.custom_todo);
+        addDialog.setContentView(R.layout.custom_todo_categories);
         Button addButton = addDialog.findViewById(R.id.addButton);
-        final TextView whatTodoText = addDialog.findViewById(R.id.whatToDo);
+        final TextView whatTodoText = addDialog.findViewById(R.id.editText);
         ConstraintLayout constraintLayout=addDialog.findViewById(R.id.constraintLayout);
         constraintLayout.setBackground(ContextCompat.getDrawable(this,colorHex));
 
@@ -157,6 +150,7 @@ public class TodoActivity extends AppCompatActivity {
                                     try {
                                         TodoItems todoItem = realm.createObject(TodoItems.class);
                                         todoItem.setTodo(todoString);
+                                        todoItem.setChecked(false);
                                         todoItems.add(todoItem);
                                         customAdapter.notifyDataSetChanged();
                                         Toasty.success(TodoActivity.this, "Succesfully Added.", Toast.LENGTH_SHORT).show();

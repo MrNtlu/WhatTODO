@@ -12,7 +12,7 @@
         android:background="@color/colorPrimaryDark">
 
         <EditText
-            android:id="@+id/categoryName"
+            android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -53,7 +53,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/categoryName">
+            app:layout_constraintTop_toBottomOf="@+id/editText">
 
             <RadioButton
                 android:id="@+id/blackColor"
