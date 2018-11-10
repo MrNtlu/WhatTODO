@@ -35,8 +35,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_plus_thin" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/app/src/main/res/drawable/plus.svg" />
+                            <entry key="outputName" value="ic_delete_24dp" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/app/src/main/res/drawable/delete.svg" />
                           </map>
                         </option>
                       </PersistentState>

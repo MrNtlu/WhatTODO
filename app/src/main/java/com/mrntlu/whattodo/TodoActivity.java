@@ -108,19 +108,24 @@ public class TodoActivity extends AppCompatActivity{
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                final String todoItem=todoItems.get(viewHolder.getAdapterPosition()).getTodo();
-                final int position=viewHolder.getAdapterPosition();
-                removeItemFromRealm(position);
+                if (todoItems.get(viewHolder.getAdapterPosition()).isChecked()) {
+                    final String todoItem = todoItems.get(viewHolder.getAdapterPosition()).getTodo();
+                    final int position = viewHolder.getAdapterPosition();
+                    removeItemFromRealm(position);
 
-                Snackbar snackbar=Snackbar.make(findViewById(R.id.coordinatorLayout),"Item deleted. Click to undo changes.",Snackbar.LENGTH_SHORT);
-                snackbar.setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        addItemToRealm(todoItem,position);
-                        recyclerViewAdapter.notifyItemInserted(position);
-                    }
-                });
-                snackbar.show();
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "Item deleted. Click UNDO to revert change.", Snackbar.LENGTH_LONG);
+                    snackbar.setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addItemToRealm(todoItem, position);
+                            recyclerViewAdapter.notifyItemInserted(position);
+                        }
+                    });
+                    snackbar.show();
+                }else {
+                    recyclerViewAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                    Snackbar.make(findViewById(R.id.coordinatorLayout),"Cannot be deleted. Please check the box.",Snackbar.LENGTH_SHORT).show();
+                }
             }
         }).attachToRecyclerView(todoRV);
 

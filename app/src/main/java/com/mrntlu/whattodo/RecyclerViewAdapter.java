@@ -56,6 +56,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if (todoItems.get(position).isChecked()){
             holder.checkBox.setChecked(true);
             overlineController(true,holder.textView);
+        }else{
+            holder.checkBox.setChecked(false);
         }
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

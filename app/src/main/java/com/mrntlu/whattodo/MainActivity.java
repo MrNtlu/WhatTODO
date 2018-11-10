@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                                     todoItems.deleteAllFromRealm();
                                     categories.deleteFromRealm();
                                     customAdapter.notifyDataSetChanged();
-                                    Toasty.success(MainActivity.this,"Succesfully Deleted.",Toast.LENGTH_SHORT).show();
                                 }catch (Exception e){
                                     Toasty.error(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-                return false;
+                return true;
             }
         });
 
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                             colorID = R.color.yellow700;
                             break;
                         case R.id.greenColor:
-                            colorID = R.color.colorPrimaryDark;
+                            colorID = R.color.green900;
                             break;
                         case R.id.blueColor:
                             colorID = R.color.blue900;

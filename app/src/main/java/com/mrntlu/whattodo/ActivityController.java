@@ -58,9 +58,9 @@ public class ActivityController{
 
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                         context.getApplicationContext());
-                deleteItem.setBackground(new ColorDrawable(Color.parseColor("#F4511E")));
+                deleteItem.setBackground(new ColorDrawable(Color.parseColor("#b71c1c")));
                 deleteItem.setWidth(175);
-                deleteItem.setIcon(R.drawable.ic_delete_black_24dp);
+                deleteItem.setIcon(R.drawable.ic_delete_24dp);
                 menu.addMenuItem(deleteItem);
             }
         };
