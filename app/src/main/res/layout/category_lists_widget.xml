@@ -3,24 +3,42 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     >
 
+    <RelativeLayout
+        android:id="@+id/fakeToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimaryDark">
+
+        <Button
+            android:id="@+id/widgetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_refresh_black_24dp"
+            android:drawablePadding="5dp"
+            android:text="Force to Refresh"
+            android:textColor="@color/white"
+            android:textSize="8sp" />
+    </RelativeLayout>
+
     <ListView
+        android:layout_below="@id/fakeToolbar"
+        android:backgroundTint="@color/white"
         android:padding="@dimen/widget_margin"
         android:id="@+id/widgetRV"
         android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_plus"
-        android:background="@android:color/transparent"
-        android:id="@+id/widgetButton"/>
-
-
-
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="2dp"
+        android:layout_margin="2dp"
+        />
 </RelativeLayout>

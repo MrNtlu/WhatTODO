@@ -7,11 +7,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.mrntlu.whattodo.MainActivity;
 import com.mrntlu.whattodo.R;
+import com.mrntlu.whattodo.TodoActivity;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Implementation of App widget functionality.
@@ -22,23 +27,30 @@ public class CategoryListsWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-
-
         Intent svcIntent=new Intent(context,WidgetService.class);
         svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,appWidgetId);
 
         RemoteViews widget=new RemoteViews(context.getPackageName(),R.layout.category_lists_widget);
         widget.setRemoteAdapter(appWidgetId,R.id.widgetRV,svcIntent);
 
-        Intent clickIntent=new Intent(context,CategoryListsWidget.class);
-        clickIntent.setAction(UPDATE_LIST);
-        clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,appWidgetId);
-        PendingIntent clickPI=PendingIntent.getBroadcast(context,0,clickIntent,0);
-        widget.setOnClickPendingIntent(R.id.widgetButton, clickPI );
+        Intent updateIntent=new Intent(context,CategoryListsWidget.class);
+        updateIntent.setAction(UPDATE_LIST);
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,appWidgetId);
+        PendingIntent updatePI=PendingIntent.getBroadcast(context,0,updateIntent,0);
+        widget.setOnClickPendingIntent(R.id.widgetButton, updatePI );
 
-        Intent intent = new Intent(UPDATE_LIST);
-        PendingIntent piOpen = PendingIntent.getBroadcast(context, 0, intent, 0);
-        widget.setPendingIntentTemplate(R.id.widgetRV,piOpen);
+//        Intent clickIntent = new Intent(context, TodoActivity.class);
+//        clickIntent.putExtra("TITLE_NAME", customAdapter.categoriesRealm.get(i).getCategory());
+//        clickIntent.putExtra("TOOLBAR_COLOR", customAdapter.categoriesRealm.get(i).getColorID());
+//        PendingIntent clickPI = PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        widget.setPendingIntentTemplate(R.id.widgetRV, clickPI);
+
+        Intent toastIntent = new Intent(context, CategoryListsWidget.class);
+        toastIntent.setAction(EXTRA_WORD);
+        toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        widget.setPendingIntentTemplate(R.id.widgetRV, toastPendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId,widget);
         //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.widgetRV);
@@ -56,14 +68,27 @@ public class CategoryListsWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equalsIgnoreCase(UPDATE_LIST)){
+            Toasty.success(context,"Refreshed", Toast.LENGTH_SHORT).show();
             updateWidget(context);
+        }
+        else if (intent.getAction().equals(EXTRA_WORD)){
+            String title=intent.getStringExtra("TITLE_NAME");
+            int toolbarColor=intent.getIntExtra("TOOLBAR_COLOR",2131034159);
+            Intent clickIntent = new Intent(context, TodoActivity.class);
+            clickIntent.putExtra("TITLE_NAME", title);
+            clickIntent.putExtra("TOOLBAR_COLOR", toolbarColor);
+            context.startActivity(clickIntent);
         }
         super.onReceive(context, intent);
     }
 
-    private void updateWidget(Context context) {
+    public void updateWidget(Context context) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, CategoryListsWidget.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetRV);
+    }
+
+    public static void updateWidgetFromActivity(Context context){
+        new CategoryListsWidget().updateWidget(context);
     }
 }

@@ -1,17 +1,21 @@
 package com.mrntlu.whattodo;
 
 import android.app.Dialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.RemoteViews;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +24,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
+import com.mrntlu.whattodo.widget.CategoryListsWidget;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else{
-            super.onBackPressed();
+            finish();
         }
     }
 
@@ -202,7 +207,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        CategoryListsWidget.updateWidgetFromActivity(getApplicationContext());
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
+        CategoryListsWidget.updateWidgetFromActivity(getApplicationContext());
         if(myRealm != null) {
             myRealm.close();
         }
@@ -285,7 +297,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             });
-                            
                             addDialog.dismiss();
                         } else {
                             Toasty.error(MainActivity.this, "Category name must be unique!", Toast.LENGTH_SHORT).show();
