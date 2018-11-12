@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +20,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrntlu.whattodo.Models.Categories;
 import com.mrntlu.whattodo.Models.TodoItems;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -285,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+                            
                             addDialog.dismiss();
                         } else {
                             Toasty.error(MainActivity.this, "Category name must be unique!", Toast.LENGTH_SHORT).show();
@@ -300,7 +301,6 @@ public class MainActivity extends AppCompatActivity {
                                     updateAndAdd(categories, categoryString, colorID);
                                 }
                             });
-
                             addDialog.dismiss();
                         } else {
                             Toasty.error(MainActivity.this, "Please don't use the same category name.", Toast.LENGTH_SHORT).show();

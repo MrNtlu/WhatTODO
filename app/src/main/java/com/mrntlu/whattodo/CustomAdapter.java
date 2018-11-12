@@ -3,7 +3,6 @@ package com.mrntlu.whattodo;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
