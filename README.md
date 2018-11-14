@@ -1,7 +1,7 @@
 # WhatTODO
 Simple ToDo APP with RealmDB and Widget
 
-<a href="#SOON"><img  src="https://play.google.com/intl/en_us/badges/images/badge_new.png"/></a>
+<a href="https://play.google.com/store/apps/details?id=com.mrntlu.whattodo"><img  src="https://play.google.com/intl/en_us/badges/images/badge_new.png"/></a>
 
 ![ic_launcher](https://user-images.githubusercontent.com/25686023/48498503-75b63e80-e847-11e8-888e-8bd1fb13e835.png)
 
