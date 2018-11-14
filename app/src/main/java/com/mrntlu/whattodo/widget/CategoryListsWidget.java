@@ -6,9 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -39,12 +36,6 @@ public class CategoryListsWidget extends AppWidgetProvider {
         PendingIntent updatePI=PendingIntent.getBroadcast(context,0,updateIntent,0);
         widget.setOnClickPendingIntent(R.id.widgetButton, updatePI );
 
-//        Intent clickIntent = new Intent(context, TodoActivity.class);
-//        clickIntent.putExtra("TITLE_NAME", customAdapter.categoriesRealm.get(i).getCategory());
-//        clickIntent.putExtra("TOOLBAR_COLOR", customAdapter.categoriesRealm.get(i).getColorID());
-//        PendingIntent clickPI = PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        widget.setPendingIntentTemplate(R.id.widgetRV, clickPI);
-
         Intent toastIntent = new Intent(context, CategoryListsWidget.class);
         toastIntent.setAction(EXTRA_WORD);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -53,12 +44,10 @@ public class CategoryListsWidget extends AppWidgetProvider {
         widget.setPendingIntentTemplate(R.id.widgetRV, toastPendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId,widget);
-        //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.widgetRV);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-//        // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }

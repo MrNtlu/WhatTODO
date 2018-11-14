@@ -218,14 +218,10 @@ public class TodoActivity extends AppCompatActivity{
                 final String todoString = whatTodoText.getText().toString();
                 if (!todoString.trim().isEmpty()) {
                     if (addOrUpdate == 0) {
-                        if (activityCont.controlUniqueCategoryName("category",todoString)) {
                             addItemToRealm(todoString,todoItems.size());
                             recyclerViewAdapter.notifyDataSetChanged();
                             addDialog.dismiss();
-                        }
-                        else {
-                            Toasty.error(context, "Category name must be unique!", Toast.LENGTH_SHORT).show();
-                        }
+
                     }
                     else {
                         myRealm.executeTransaction(new Realm.Transaction() {
@@ -240,7 +236,7 @@ public class TodoActivity extends AppCompatActivity{
                     }
                 }
                 else {
-                    Toasty.error(context, "Please enter a category!", Toast.LENGTH_SHORT).show();
+                    Toasty.error(context, "Please don't leave it empty!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

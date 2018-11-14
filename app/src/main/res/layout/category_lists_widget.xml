@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@android:color/transparent"
     >
 
     <RelativeLayout
@@ -12,8 +13,9 @@
         android:layout_height="45dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@color/colorPrimaryDark">
-
+        android:background="@color/colorPrimaryDark"
+        android:elevation="5dp"
+        >
         <Button
             android:id="@+id/widgetButton"
             android:layout_width="wrap_content"
@@ -27,11 +29,12 @@
             android:text="Force to Refresh"
             android:textColor="@color/white"
             android:textSize="8sp" />
+
     </RelativeLayout>
 
     <ListView
         android:layout_below="@id/fakeToolbar"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@android:color/transparent"
         android:padding="@dimen/widget_margin"
         android:id="@+id/widgetRV"
         android:background="@color/colorPrimaryDark"
@@ -39,6 +42,5 @@
         android:layout_height="match_parent"
         android:divider="@android:color/transparent"
         android:dividerHeight="2dp"
-        android:layout_margin="2dp"
-        />
+        android:layout_marginTop="2dp"/>
 </RelativeLayout>
